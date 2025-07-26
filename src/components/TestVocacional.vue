@@ -1357,7 +1357,6 @@ h1 {
   padding: 25px;
   margin-bottom: 30px;
   box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
-  border-left: 5px solid #FF671F;
 }
 
 .section h2 {
@@ -1421,7 +1420,7 @@ h1 {
   border-color: #FF671F;
 }
 
-.btn-yes:hover, .btn-yes.active {
+.btn-yes.active {
   background: #FF671F;
   color: white;
   transform: translateY(-1px);
@@ -1434,7 +1433,7 @@ h1 {
   border-color: #5B3427;
 }
 
-.btn-no:hover, .btn-no.active {
+.btn-no.active {
   background: #5B3427;
   color: white;
   transform: translateY(-1px);
