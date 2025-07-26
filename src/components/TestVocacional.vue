@@ -10,7 +10,7 @@
     <div v-if="!showResults" class="progress-container">
       <div class="progress-header">
         <h3>Página {{ currentPage }} de {{ totalPages }}</h3>
-        <p>{{ getCurrentSectionName() }}</p>
+        <!-- <p>{{ getCurrentSectionName() }}</p> -->
       </div>
       <div class="progress-bar">
         <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
@@ -37,7 +37,7 @@
         <div :key="currentPage" class="page-container">
           <!-- Página 1: Económicas -->
           <div v-if="currentPage === 1" class="section">
-            <h2>Tabla 1 C - Administrativas, Contables y Económicas</h2>
+            <h2>Tabla 1 C</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.economica.interes" :key="'eco-int-' + index" class="question">
@@ -87,7 +87,7 @@
 
           <!-- Página 2: Humanísticas -->
           <div v-if="currentPage === 2" class="section">
-            <h2>Tabla 2 H - Humanísticas, Ciencias Jurídicas y Ciencias Sociales</h2>
+            <h2>Tabla 2 H</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.humanistica.interes" :key="'hum-int-' + index" class="question">
@@ -137,7 +137,7 @@
 
           <!-- Página 3: Artísticas -->
           <div v-if="currentPage === 3" class="section">
-            <h2>Tabla 3 A - Artísticas</h2>
+            <h2>Tabla 3 A</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.artistica.interes" :key="'art-int-' + index" class="question">
@@ -187,7 +187,7 @@
 
           <!-- Página 4: Salud -->
           <div v-if="currentPage === 4" class="section">
-            <h2>Tabla 4 S - Ciencias de la Salud</h2>
+            <h2>Tabla 4 S</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.salud.interes" :key="'sal-int-' + index" class="question">
@@ -237,7 +237,7 @@
 
           <!-- Página 5: Ingeniería -->
           <div v-if="currentPage === 5" class="section">
-            <h2>Tabla 5 I - Ingenierías, Carreras Técnicas y Computación</h2>
+            <h2>Tabla 5 I</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.ingenieria.interes" :key="'ing-int-' + index" class="question">
@@ -287,7 +287,7 @@
 
           <!-- Página 6: Defensa -->
           <div v-if="currentPage === 6" class="section">
-            <h2>Tabla 6 D - Defensa y Seguridad</h2>
+            <h2>Tabla 6 D</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.defensa.interes" :key="'def-int-' + index" class="question">
@@ -337,7 +337,7 @@
 
           <!-- Página 7: Ciencias Exactas -->
           <div v-if="currentPage === 7" class="section">
-            <h2>Tabla 7 E - Ciencias Agrarias de la Naturaleza, Zoológicas y Biológicas</h2>
+            <h2>Tabla 7 E</h2>
             <h3>Interés</h3>
             <div class="questions">
               <div v-for="(question, index) in questions.exactas.interes" :key="'exa-int-' + index" class="question">
