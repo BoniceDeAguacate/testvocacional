@@ -1,363 +1,426 @@
 <template>
   <div class="test-vocacional">
-    <h1>Test de Orientación Vocacional</h1>
-    <p>Responde con "Sí" o "No" a cada pregunta según tu preferencia personal.</p>
+    <div class="header">
+      <img src="@/assets/UPQROO-logo.png" alt="UPQROO Logo" class="university-logo" />
+      <h1>Test de Orientación Vocacional</h1>
+      <p>Responde con "Sí" o "No" a cada pregunta según tu preferencia personal.</p>
+    </div>
+
+    <!-- Indicador de Progreso -->
+    <div v-if="!showResults" class="progress-container">
+      <div class="progress-header">
+        <h3>Página {{ currentPage }} de {{ totalPages }}</h3>
+        <p>{{ getCurrentSectionName() }}</p>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+      </div>
+      <div class="progress-steps">
+        <div 
+          v-for="step in totalPages" 
+          :key="step"
+          class="step"
+          :class="{ 
+            'completed': isPageCompleted(step), 
+            'current': step === currentPage,
+            'pending': !isPageCompleted(step) && step !== currentPage 
+          }"
+          @click="goToPage(step)"
+        >
+          {{ step }}
+        </div>
+      </div>
+    </div>
     
     <div v-if="!showResults" class="questionnaire">
-      <!-- Tabla 1C - Carreras Económicas/Comerciales -->
-      <div class="section">
-        <h2>Tabla 1 C</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.economica.interes" :key="'eco-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('economica', 'interes', index, true)"
-                :class="{ active: answers.economica.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('economica', 'interes', index, false)"
-                :class="{ active: answers.economica.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+      <Transition name="page" mode="out-in">
+        <div :key="currentPage" class="page-container">
+          <!-- Página 1: Económicas -->
+          <div v-if="currentPage === 1" class="section">
+            <h2>Tabla 1 C - Administrativas, Contables y Económicas</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.economica.interes" :key="'eco-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('economica', 'interes', index, true)"
+                    :class="{ active: answers.economica.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('economica', 'interes', index, false)"
+                    :class="{ active: answers.economica.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.economica.aptitud" :key="'eco-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('economica', 'aptitud', index, true)"
+                    :class="{ active: answers.economica.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('economica', 'aptitud', index, false)"
+                    :class="{ active: answers.economica.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.economica.aptitud" :key="'eco-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('economica', 'aptitud', index, true)"
-                :class="{ active: answers.economica.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('economica', 'aptitud', index, false)"
-                :class="{ active: answers.economica.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabla 2H - Carreras Humanísticas -->
-      <div class="section">
-        <h2>Tabla 2 H</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.humanistica.interes" :key="'hum-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('humanistica', 'interes', index, true)"
-                :class="{ active: answers.humanistica.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('humanistica', 'interes', index, false)"
-                :class="{ active: answers.humanistica.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+          <!-- Página 2: Humanísticas -->
+          <div v-if="currentPage === 2" class="section">
+            <h2>Tabla 2 H - Humanísticas, Ciencias Jurídicas y Ciencias Sociales</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.humanistica.interes" :key="'hum-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('humanistica', 'interes', index, true)"
+                    :class="{ active: answers.humanistica.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('humanistica', 'interes', index, false)"
+                    :class="{ active: answers.humanistica.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.humanistica.aptitud" :key="'hum-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('humanistica', 'aptitud', index, true)"
+                    :class="{ active: answers.humanistica.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('humanistica', 'aptitud', index, false)"
+                    :class="{ active: answers.humanistica.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.humanistica.aptitud" :key="'hum-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('humanistica', 'aptitud', index, true)"
-                :class="{ active: answers.humanistica.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('humanistica', 'aptitud', index, false)"
-                :class="{ active: answers.humanistica.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabla 3A - Carreras Artísticas -->
-      <div class="section">
-        <h2>Tabla 3 A</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.artistica.interes" :key="'art-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('artistica', 'interes', index, true)"
-                :class="{ active: answers.artistica.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('artistica', 'interes', index, false)"
-                :class="{ active: answers.artistica.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+          <!-- Página 3: Artísticas -->
+          <div v-if="currentPage === 3" class="section">
+            <h2>Tabla 3 A - Artísticas</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.artistica.interes" :key="'art-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('artistica', 'interes', index, true)"
+                    :class="{ active: answers.artistica.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('artistica', 'interes', index, false)"
+                    :class="{ active: answers.artistica.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.artistica.aptitud" :key="'art-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('artistica', 'aptitud', index, true)"
+                    :class="{ active: answers.artistica.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('artistica', 'aptitud', index, false)"
+                    :class="{ active: answers.artistica.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.artistica.aptitud" :key="'art-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('artistica', 'aptitud', index, true)"
-                :class="{ active: answers.artistica.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('artistica', 'aptitud', index, false)"
-                :class="{ active: answers.artistica.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabla 4S - Carreras de Salud -->
-      <div class="section">
-        <h2>Tabla 4 S</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.salud.interes" :key="'sal-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('salud', 'interes', index, true)"
-                :class="{ active: answers.salud.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('salud', 'interes', index, false)"
-                :class="{ active: answers.salud.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+          <!-- Página 4: Salud -->
+          <div v-if="currentPage === 4" class="section">
+            <h2>Tabla 4 S - Ciencias de la Salud</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.salud.interes" :key="'sal-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('salud', 'interes', index, true)"
+                    :class="{ active: answers.salud.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('salud', 'interes', index, false)"
+                    :class="{ active: answers.salud.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.salud.aptitud" :key="'sal-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('salud', 'aptitud', index, true)"
+                    :class="{ active: answers.salud.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('salud', 'aptitud', index, false)"
+                    :class="{ active: answers.salud.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.salud.aptitud" :key="'sal-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('salud', 'aptitud', index, true)"
-                :class="{ active: answers.salud.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('salud', 'aptitud', index, false)"
-                :class="{ active: answers.salud.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabla 5I - Carreras de Ingeniería -->
-      <div class="section">
-        <h2>Tabla 5 I</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.ingenieria.interes" :key="'ing-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('ingenieria', 'interes', index, true)"
-                :class="{ active: answers.ingenieria.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('ingenieria', 'interes', index, false)"
-                :class="{ active: answers.ingenieria.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+          <!-- Página 5: Ingeniería -->
+          <div v-if="currentPage === 5" class="section">
+            <h2>Tabla 5 I - Ingenierías, Carreras Técnicas y Computación</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.ingenieria.interes" :key="'ing-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('ingenieria', 'interes', index, true)"
+                    :class="{ active: answers.ingenieria.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('ingenieria', 'interes', index, false)"
+                    :class="{ active: answers.ingenieria.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.ingenieria.aptitud" :key="'ing-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('ingenieria', 'aptitud', index, true)"
+                    :class="{ active: answers.ingenieria.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('ingenieria', 'aptitud', index, false)"
+                    :class="{ active: answers.ingenieria.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.ingenieria.aptitud" :key="'ing-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('ingenieria', 'aptitud', index, true)"
-                :class="{ active: answers.ingenieria.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('ingenieria', 'aptitud', index, false)"
-                :class="{ active: answers.ingenieria.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabla 6D - Carreras de Defensa -->
-      <div class="section">
-        <h2>Tabla 6 D</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.defensa.interes" :key="'def-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('defensa', 'interes', index, true)"
-                :class="{ active: answers.defensa.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('defensa', 'interes', index, false)"
-                :class="{ active: answers.defensa.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+          <!-- Página 6: Defensa -->
+          <div v-if="currentPage === 6" class="section">
+            <h2>Tabla 6 D - Defensa y Seguridad</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.defensa.interes" :key="'def-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('defensa', 'interes', index, true)"
+                    :class="{ active: answers.defensa.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('defensa', 'interes', index, false)"
+                    :class="{ active: answers.defensa.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.defensa.aptitud" :key="'def-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('defensa', 'aptitud', index, true)"
+                    :class="{ active: answers.defensa.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('defensa', 'aptitud', index, false)"
+                    :class="{ active: answers.defensa.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.defensa.aptitud" :key="'def-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('defensa', 'aptitud', index, true)"
-                :class="{ active: answers.defensa.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('defensa', 'aptitud', index, false)"
-                :class="{ active: answers.defensa.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabla 7E - Carreras de Ciencias Exactas -->
-      <div class="section">
-        <h2>Tabla 7 E</h2>
-        <div class="questions">
-          <div v-for="(question, index) in questions.exactas.interes" :key="'exa-int-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('exactas', 'interes', index, true)"
-                :class="{ active: answers.exactas.interes[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('exactas', 'interes', index, false)"
-                :class="{ active: answers.exactas.interes[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
+          <!-- Página 7: Ciencias Exactas -->
+          <div v-if="currentPage === 7" class="section">
+            <h2>Tabla 7 E - Ciencias Agrarias de la Naturaleza, Zoológicas y Biológicas</h2>
+            <h3>Interés</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.exactas.interes" :key="'exa-int-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('exactas', 'interes', index, true)"
+                    :class="{ active: answers.exactas.interes[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('exactas', 'interes', index, false)"
+                    :class="{ active: answers.exactas.interes[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h3>Aptitud</h3>
+            <div class="questions">
+              <div v-for="(question, index) in questions.exactas.aptitud" :key="'exa-apt-' + index" class="question">
+                <p>{{ question.text }}</p>
+                <div class="answer-buttons">
+                  <button 
+                    @click="updateAnswer('exactas', 'aptitud', index, true)"
+                    :class="{ active: answers.exactas.aptitud[index] === true }"
+                    class="btn-yes"
+                  >
+                    Sí
+                  </button>
+                  <button 
+                    @click="updateAnswer('exactas', 'aptitud', index, false)"
+                    :class="{ active: answers.exactas.aptitud[index] === false }"
+                    class="btn-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <h3>Aptitud</h3>
-        <div class="questions">
-          <div v-for="(question, index) in questions.exactas.aptitud" :key="'exa-apt-' + index" class="question">
-            <p>{{ question.text }}</p>
-            <div class="answer-buttons">
-              <button 
-                @click="updateAnswer('exactas', 'aptitud', index, true)"
-                :class="{ active: answers.exactas.aptitud[index] === true }"
-                class="btn-yes"
-              >
-                Sí
-              </button>
-              <button 
-                @click="updateAnswer('exactas', 'aptitud', index, false)"
-                :class="{ active: answers.exactas.aptitud[index] === false }"
-                class="btn-no"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      </Transition>
 
-      <div class="submit-section">
-        <div class="progress-info">
-          <p>Progreso: {{ Object.keys(answers.economica.interes).length + Object.keys(answers.economica.aptitud).length + Object.keys(answers.humanistica.interes).length + Object.keys(answers.humanistica.aptitud).length + Object.keys(answers.artistica.interes).length + Object.keys(answers.artistica.aptitud).length + Object.keys(answers.salud.interes).length + Object.keys(answers.salud.aptitud).length + Object.keys(answers.ingenieria.interes).length + Object.keys(answers.ingenieria.aptitud).length + Object.keys(answers.defensa.interes).length + Object.keys(answers.defensa.aptitud).length + Object.keys(answers.exactas.interes).length + Object.keys(answers.exactas.aptitud).length }} / {{ questions.economica.interes.length + questions.economica.aptitud.length + questions.humanistica.interes.length + questions.humanistica.aptitud.length + questions.artistica.interes.length + questions.artistica.aptitud.length + questions.salud.interes.length + questions.salud.aptitud.length + questions.ingenieria.interes.length + questions.ingenieria.aptitud.length + questions.defensa.interes.length + questions.defensa.aptitud.length + questions.exactas.interes.length + questions.exactas.aptitud.length }} preguntas respondidas</p>
+      <!-- Navegación -->
+      <div class="navigation-section">
+        <div class="page-info">
+          <p>{{ getPageProgress() }}</p>
         </div>
-        <button 
-          @click="calculateResults" 
-          :class="{ 'btn-disabled': !areAllQuestionsAnswered() }"
-          class="btn-submit"
-        >
-          {{ areAllQuestionsAnswered() ? 'Ver Resultados' : 'Completa todas las preguntas' }}
-        </button>
+        <div class="navigation-buttons">
+          <button 
+            @click="previousPage" 
+            :disabled="currentPage === 1"
+            class="btn-nav btn-previous"
+          >
+            ← Anterior
+          </button>
+          
+          <button 
+            v-if="currentPage < totalPages"
+            @click="nextPage" 
+            :disabled="!isCurrentPageValid()"
+            :class="{ 'btn-disabled': !isCurrentPageValid() }"
+            class="btn-nav btn-next"
+          >
+            Siguiente →
+          </button>
+          
+          <button 
+            v-if="currentPage === totalPages"
+            @click="calculateResults" 
+            :disabled="!areAllQuestionsAnswered()"
+            :class="{ 'btn-disabled': !areAllQuestionsAnswered() }"
+            class="btn-submit"
+          >
+            {{ areAllQuestionsAnswered() ? 'Ver Resultados' : 'Completa todas las preguntas' }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -475,12 +538,39 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 
 export default {
   name: 'TestVocacional',
   setup() {
     const showResults = ref(false)
+    const currentPage = ref(1)
+    const totalPages = ref(7)
+
+    // Computed properties para la paginación
+    const progressPercentage = computed(() => {
+      return (currentPage.value / totalPages.value) * 100
+    })
+
+    const sectionNames = [
+      'Administrativas, Contables y Económicas',
+      'Humanísticas, Ciencias Jurídicas y Ciencias Sociales', 
+      'Artísticas',
+      'Ciencias de la Salud',
+      'Ingenierías, Carreras Técnicas y Computación',
+      'Defensa y Seguridad',
+      'Ciencias Agrarias de la Naturaleza, Zoológicas y Biológicas'
+    ]
+
+    const sectionKeys = [
+      'economica',
+      'humanistica', 
+      'artistica',
+      'salud',
+      'ingenieria',
+      'defensa',
+      'exactas'
+    ]
 
     const questions = reactive({
       economica: {
@@ -689,6 +779,129 @@ export default {
 
     function updateAnswer(area, type, questionIndex, value) {
       answers[area][type][questionIndex] = value
+      saveToLocalStorage()
+    }
+
+    // Funciones de paginación
+    function getCurrentSectionName() {
+      return sectionNames[currentPage.value - 1]
+    }
+
+    function getPageProgress() {
+      const currentSection = sectionKeys[currentPage.value - 1]
+      const interesAnswered = Object.keys(answers[currentSection].interes).length
+      const aptitudAnswered = Object.keys(answers[currentSection].aptitud).length
+      const totalQuestions = questions[currentSection].interes.length + questions[currentSection].aptitud.length
+      const answeredQuestions = interesAnswered + aptitudAnswered
+      
+      return `${answeredQuestions} de ${totalQuestions} preguntas respondidas en esta sección`
+    }
+
+    function isCurrentPageValid() {
+      const currentSection = sectionKeys[currentPage.value - 1]
+      const interesTotal = questions[currentSection].interes.length
+      const aptitudTotal = questions[currentSection].aptitud.length
+      const interesAnswered = Object.keys(answers[currentSection].interes).length
+      const aptitudAnswered = Object.keys(answers[currentSection].aptitud).length
+      
+      return interesAnswered === interesTotal && aptitudAnswered === aptitudTotal
+    }
+
+    function isPageCompleted(pageNumber) {
+      const section = sectionKeys[pageNumber - 1]
+      if (!section || !answers[section]) return false
+      
+      const interesTotal = questions[section].interes.length
+      const aptitudTotal = questions[section].aptitud.length
+      const interesAnswered = Object.keys(answers[section].interes).length
+      const aptitudAnswered = Object.keys(answers[section].aptitud).length
+      
+      return interesAnswered === interesTotal && aptitudAnswered === aptitudTotal
+    }
+
+    function nextPage() {
+      if (currentPage.value < totalPages.value && isCurrentPageValid()) {
+        currentPage.value++
+        scrollToTop()
+      }
+    }
+
+    function previousPage() {
+      if (currentPage.value > 1) {
+        currentPage.value--
+        scrollToTop()
+      }
+    }
+
+    function goToPage(pageNumber) {
+      // Permitir navegar a:
+      // 1. Páginas completadas
+      // 2. La página actual
+      // 3. La siguiente página después de la última completada
+      
+      if (pageNumber >= 1 && pageNumber <= totalPages.value) {
+        // Si la página está completada, siempre permitir ir
+        if (isPageCompleted(pageNumber)) {
+          currentPage.value = pageNumber
+          scrollToTop()
+          return
+        }
+        
+        // Si es la página actual, permitir ir
+        if (pageNumber === currentPage.value) {
+          currentPage.value = pageNumber
+          scrollToTop()
+          return
+        }
+        
+        // Encontrar la última página completada
+        let lastCompletedPage = 0
+        for (let i = 1; i <= totalPages.value; i++) {
+          if (isPageCompleted(i)) {
+            lastCompletedPage = i
+          }
+        }
+        
+        // Permitir ir a la siguiente página después de la última completada
+        if (pageNumber === lastCompletedPage + 1) {
+          currentPage.value = pageNumber
+          scrollToTop()
+        }
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    // Persistencia de datos
+    function saveToLocalStorage() {
+      const data = {
+        answers: answers,
+        currentPage: currentPage.value
+      }
+      localStorage.setItem('testVocacional', JSON.stringify(data))
+    }
+
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem('testVocacional')
+      if (saved) {
+        try {
+          const data = JSON.parse(saved)
+          if (data.answers) {
+            Object.assign(answers, data.answers)
+          }
+          if (data.currentPage) {
+            currentPage.value = data.currentPage
+          }
+        } catch (error) {
+          console.log('Error loading saved data:', error)
+        }
+      }
+    }
+
+    function clearLocalStorage() {
+      localStorage.removeItem('testVocacional')
     }
 
     function areAllQuestionsAnswered() {
@@ -839,19 +1052,47 @@ export default {
       results.exactas.interes = 0
       results.exactas.aptitud = 0
       
+      // Resetear paginación
+      currentPage.value = 1
       showResults.value = false
+      
+      // Limpiar localStorage
+      clearLocalStorage()
+      
+      // Volver al inicio
+      scrollToTop()
     }
+
+    // Lifecycle hooks
+    onMounted(() => {
+      loadFromLocalStorage()
+    })
+
+    // Watchers
+    watch(currentPage, () => {
+      saveToLocalStorage()
+    })
 
     return {
       questions,
       answers,
       results,
       showResults,
+      currentPage,
+      totalPages,
+      progressPercentage,
       updateAnswer,
       areAllQuestionsAnswered,
       calculateResults,
       getRecommendation,
-      resetTest
+      resetTest,
+      getCurrentSectionName,
+      getPageProgress,
+      isCurrentPageValid,
+      isPageCompleted,
+      nextPage,
+      previousPage,
+      goToPage
     }
   }
 }
@@ -863,47 +1104,299 @@ export default {
   margin: 0 auto;
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  background: white;
+  border-radius: 15px;
+  padding: 30px 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
+  border-top: 5px solid #FF671F;
+}
+
+.university-logo {
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h1 {
   text-align: center;
-  color: #2c3e50;
+  color: #5B3427;
   margin-bottom: 10px;
+  font-size: 2.2em;
+  font-weight: 700;
 }
 
-.section {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
+.header p {
+  color: #5B3427;
+  font-size: 1.1em;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Estilos para la paginación */
+.progress-container {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
+  border-top: 3px solid #FF671F;
 }
 
-.section h2 {
-  color: #34495e;
-  border-bottom: 3px solid #3498db;
-  padding-bottom: 10px;
+.progress-header {
+  text-align: center;
   margin-bottom: 20px;
 }
 
+.progress-header h3 {
+  color: #5B3427;
+  margin: 0 0 10px 0;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.progress-header p {
+  color: #5B3427;
+  margin: 0;
+  opacity: 0.8;
+  font-size: 1.05em;
+}
+
+.progress-bar {
+  background: #f0f0f0;
+  border-radius: 10px;
+  height: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #FF671F 0%, #ff8f47 100%);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  box-shadow: 0 2px 8px rgba(255, 103, 31, 0.3);
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #ddd;
+  background: white;
+  color: #999;
+  position: relative;
+}
+
+.step.completed {
+  background: #FF671F;
+  color: white;
+  border-color: #FF671F;
+  box-shadow: 0 4px 12px rgba(255, 103, 31, 0.3);
+  cursor: pointer;
+}
+
+.step.completed:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(255, 103, 31, 0.4);
+}
+
+.step.current {
+  background: #5B3427;
+  color: white;
+  border-color: #5B3427;
+  box-shadow: 0 4px 12px rgba(91, 52, 39, 0.3);
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.step.current:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(91, 52, 39, 0.4);
+}
+
+.step.pending {
+  background: white;
+  color: #999;
+  border-color: #ddd;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Indicador visual para páginas navegables */
+.step.completed::after {
+  content: '✓';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #28a745;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.step:hover:not(.pending) {
+  transform: scale(1.05);
+}
+
+/* Contenedor de página con animaciones */
+.page-container {
+  min-height: 400px;
+}
+
+/* Animaciones de transición */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* Navegación */
+.navigation-section {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  margin-top: 30px;
+  box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
+  border-bottom: 3px solid #FF671F;
+}
+
+.page-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-info p {
+  color: #5B3427;
+  font-weight: 500;
+  margin: 0;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-nav {
+  background: linear-gradient(45deg, #5B3427, #7a4d3d);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(91, 52, 39, 0.3);
+  min-width: 120px;
+}
+
+.btn-nav:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(91, 52, 39, 0.4);
+}
+
+.btn-nav:disabled {
+  background: linear-gradient(45deg, #ccc, #aaa);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-next {
+  background: linear-gradient(45deg, #FF671F, #ff8f47);
+  box-shadow: 0 4px 15px rgba(255, 103, 31, 0.3);
+}
+
+.btn-next:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(255, 103, 31, 0.4);
+}
+
+.section {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
+  border-left: 5px solid #FF671F;
+}
+
+.section h2 {
+  color: #5B3427;
+  border-bottom: 3px solid #FF671F;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
 .section h3 {
-  color: #2c3e50;
+  color: #5B3427;
   margin-top: 30px;
   margin-bottom: 15px;
+  font-size: 1.4em;
+  font-weight: 600;
 }
 
 .question {
-  background: white;
-  border-radius: 8px;
-  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
   margin-bottom: 15px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(91, 52, 39, 0.08);
+  border: 1px solid rgba(255, 103, 31, 0.1);
+  transition: all 0.3s ease;
+}
+
+.question:hover {
+  box-shadow: 0 4px 15px rgba(91, 52, 39, 0.15);
+  transform: translateY(-2px);
 }
 
 .question p {
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   font-weight: 500;
-  color: #2c3e50;
+  color: #5B3427;
+  line-height: 1.4;
 }
 
 .answer-buttons {
@@ -912,80 +1405,105 @@ h1 {
 }
 
 .btn-yes, .btn-no {
-  padding: 8px 20px;
+  padding: 10px 25px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   transition: all 0.3s ease;
+  font-size: 14px;
+  min-width: 80px;
 }
 
 .btn-yes {
   background: white;
-  color: #27ae60;
-  border-color: #27ae60;
+  color: #FF671F;
+  border-color: #FF671F;
 }
 
 .btn-yes:hover, .btn-yes.active {
-  background: #27ae60;
+  background: #FF671F;
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 103, 31, 0.3);
 }
 
 .btn-no {
   background: white;
-  color: #e74c3c;
-  border-color: #e74c3c;
+  color: #5B3427;
+  border-color: #5B3427;
 }
 
 .btn-no:hover, .btn-no.active {
-  background: #e74c3c;
+  background: #5B3427;
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(91, 52, 39, 0.3);
 }
 
 .submit-section {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 40px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
 }
 
 .progress-info {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .progress-info p {
   font-size: 16px;
   font-weight: 600;
-  color: #2c3e50;
+  color: #5B3427;
   margin: 0;
 }
 
 .btn-submit, .btn-reset {
-  background: linear-gradient(45deg, #3498db, #2980b9);
+  background: linear-gradient(45deg, #FF671F, #ff8f47);
   color: white;
   border: none;
-  padding: 15px 30px;
+  padding: 15px 35px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   border-radius: 25px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 103, 31, 0.3);
 }
 
 .btn-submit:hover, .btn-reset:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 103, 31, 0.4);
 }
 
 .btn-disabled {
-  background: linear-gradient(45deg, #95a5a6, #7f8c8d) !important;
+  background: linear-gradient(45deg, #5B3427, #7a4d3d) !important;
   cursor: not-allowed !important;
   transform: none !important;
+  box-shadow: 0 2px 8px rgba(91, 52, 39, 0.2) !important;
 }
 
 .btn-disabled:hover {
   transform: none !important;
+  box-shadow: 0 2px 8px rgba(91, 52, 39, 0.2) !important;
 }
 
 .results {
   text-align: center;
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 5px 20px rgba(91, 52, 39, 0.1);
+}
+
+.results h2 {
+  color: #5B3427;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 700;
 }
 
 .results-grid {
@@ -1008,31 +1526,31 @@ h1 {
 }
 
 .result-card:nth-child(1) {
-  background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%);
+  background: linear-gradient(135deg, #FF671F 0%, #ff8f47 100%);
 }
 
 .result-card:nth-child(2) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #5B3427 0%, #7a4d3d 100%);
 }
 
 .result-card:nth-child(3) {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  background: linear-gradient(135deg, #FF671F 0%, #5B3427 100%);
 }
 
 .result-card:nth-child(4) {
-  background: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%);
+  background: linear-gradient(135deg, #ff8f47 0%, #FF671F 100%);
 }
 
 .result-card:nth-child(5) {
-  background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%);
+  background: linear-gradient(135deg, #7a4d3d 0%, #5B3427 100%);
 }
 
 .result-card:nth-child(6) {
-  background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+  background: linear-gradient(135deg, #5B3427 0%, #FF671F 100%);
 }
 
 .result-card:nth-child(7) {
-  background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+  background: linear-gradient(135deg, #ff8f47 0%, #7a4d3d 100%);
 }
 
 .result-card h3 {
@@ -1061,35 +1579,114 @@ h1 {
 }
 
 .recommendation {
-  background: #e8f5e8;
-  border: 2px solid #27ae60;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 20px 0;
+  background: linear-gradient(135deg, rgba(255, 103, 31, 0.1) 0%, rgba(91, 52, 39, 0.1) 100%);
+  border: 2px solid #FF671F;
+  border-radius: 15px;
+  padding: 25px;
+  margin: 30px 0;
+  box-shadow: 0 4px 15px rgba(255, 103, 31, 0.1);
 }
 
 .recommendation h3 {
-  color: #27ae60;
+  color: #5B3427;
   margin-top: 0;
+  font-size: 1.5em;
+  font-weight: 600;
 }
 
 .recommendation p {
-  color: #2c3e50;
+  color: #5B3427;
   line-height: 1.6;
   margin: 0;
+  font-size: 1.05em;
 }
 
 @media (max-width: 768px) {
   .test-vocacional {
-    padding: 10px;
+    padding: 15px;
+  }
+  
+  .header {
+    padding: 20px 15px;
+  }
+  
+  .university-logo {
+    max-width: 250px;
+  }
+  
+  h1 {
+    font-size: 1.8em;
+  }
+  
+  .section {
+    padding: 20px;
   }
   
   .answer-buttons {
     flex-direction: column;
+    gap: 8px;
   }
   
   .btn-yes, .btn-no {
     width: 100%;
+    padding: 12px 25px;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Navegación responsiva */
+  .navigation-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn-nav {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .progress-steps {
+    gap: 8px;
+  }
+  
+  .step {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .progress-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .university-logo {
+    max-width: 200px;
+  }
+  
+  h1 {
+    font-size: 1.6em;
+  }
+  
+  .section h2 {
+    font-size: 1.5em;
+  }
+  
+  .step {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+  
+  .progress-header h3 {
+    font-size: 1.1em;
+  }
+  
+  .progress-header p {
+    font-size: 0.95em;
   }
 }
 </style>
